@@ -14,8 +14,11 @@ public class LongTask extends AsyncTask<String, Integer, Integer> {
 
     private IReportBack iReportBack;
     private String TAG;
-    private ProgressDialog progressDialog = null;
     private WeakReference<Context> context;
+
+    /*When the Activity stops existing,
+    since it is hold through the means of a WeakReference,
+    it can be collected. Therefore no memory leaks will happen.*/
 
     LongTask(Context context, IReportBack iReportBack, String tag) {
         this.iReportBack = iReportBack;
@@ -38,9 +41,11 @@ public class LongTask extends AsyncTask<String, Integer, Integer> {
 
     protected void onPostExecute(Integer result) {
 //Runs on the main ui thread
-        iReportBack.postExecute();
-        Log.i(TAG, "onPreExecute: " + Thread.currentThread());
-        iReportBack.reportBack(TAG, "onPostExecute result:" + result);
+        if (context.get() != null) { // if activity is not destroyed and  collected by garbage collector
+            iReportBack.postExecute();
+            Log.i(TAG, "onPreExecute: " + Thread.currentThread());
+            iReportBack.reportBack(TAG, "onPostExecute result:" + result);
+        }
     }
 
     @Override
