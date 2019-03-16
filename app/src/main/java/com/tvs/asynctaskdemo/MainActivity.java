@@ -2,6 +2,7 @@ package com.tvs.asynctaskdemo;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-public class MainActivity extends AppCompatActivity implements IReportBack {
+public class MainActivity extends AppCompatActivity implements IReportBack, DialogInterface.OnCancelListener {
 
     private String TAG = "MainActivity";
     Button button;
@@ -39,18 +40,29 @@ public class MainActivity extends AppCompatActivity implements IReportBack {
         progressBar.setVisibility(View.VISIBLE);
         progressDialog.setTitle("Title");
         progressDialog.setMessage("Downloading");
-        progressDialog.setIndeterminate(true);
+//        progressDialog.setIndeterminate(true);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setOnCancelListener(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMax(100);
+        progressDialog.setCancelable(true);
         progressDialog.show();
     }
 
     @Override
-    public void reportBack(String tag, String result) {
+    public void reportBack(String tag, int result) {
         Log.i(TAG, "reportBack: "+result);
+        progressDialog.setProgress(result);
     }
 
     @Override
     public void postExecute() {
         progressBar.setVisibility(View.GONE);
+        progressDialog.cancel();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
         progressDialog.cancel();
     }
 }

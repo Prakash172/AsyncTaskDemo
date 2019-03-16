@@ -36,15 +36,15 @@ public class LongTask extends AsyncTask<String, Integer, Integer> {
     protected void onProgressUpdate(Integer... progress) {
         Log.i(TAG, "onPreExecute: " + Thread.currentThread());
         Integer i = progress[0];
-        iReportBack.reportBack(TAG, "Progress:" + i.toString());
+        iReportBack.reportBack(TAG, (i+1)*(100/5));
     }
 
     protected void onPostExecute(Integer result) {
 //Runs on the main ui thread
         if (context.get() != null) { // if activity is not destroyed and  collected by garbage collector
+            iReportBack.reportBack(TAG, result);
             iReportBack.postExecute();
             Log.i(TAG, "onPreExecute: " + Thread.currentThread());
-            iReportBack.reportBack(TAG, "onPostExecute result:" + result);
         }
     }
 
@@ -54,7 +54,7 @@ public class LongTask extends AsyncTask<String, Integer, Integer> {
         for (String s : strings) {
             Log.i(TAG, "Processing:" + s);
         }
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
